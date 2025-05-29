@@ -14,12 +14,32 @@ namespace FlexportDocumentUploadConsumerService
         /// </summary>
         static void Main()
         {
-            ServiceBase[] ServicesToRun;
-            ServicesToRun = new ServiceBase[]
+            try
             {
+#if DEBUG
+                var service = new Service1();
+                service.StartDebug();
+
+                Console.WriteLine("Running in debug mode. Press any key to exit...");
+                Console.ReadKey();
+
+                service.StopDebug(); // ⬅️ Gracefully stop
+#else
+                ServiceBase[] ServicesToRun;
+                ServicesToRun = new ServiceBase[]
+                {
                 new Service1()
-            };
-            ServiceBase.Run(ServicesToRun);
+                };
+                ServiceBase.Run(ServicesToRun);
+#endif
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Unhandled exception: " + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+
+            
         }
     }
 }

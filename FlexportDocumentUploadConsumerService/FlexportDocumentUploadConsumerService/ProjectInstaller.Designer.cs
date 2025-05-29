@@ -1,4 +1,6 @@
-﻿namespace FlexportDocumentUploadConsumerService
+﻿using System.ServiceProcess;
+
+namespace FlexportDocumentUploadConsumerService
 {
     partial class ProjectInstaller
     {
@@ -38,7 +40,11 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.ServiceName = "Service1";
+            //this.serviceInstaller1.ServiceName = "Service1";
+            this.serviceInstaller1.ServiceName = "FlexportFileUploadService";
+            this.serviceInstaller1.DisplayName = "Flexport File Upload Service";
+            this.serviceInstaller1.Description = "This service handles background upload file tasks.";
+            this.serviceInstaller1.StartType = ServiceStartMode.Automatic; // Always starts on boot
             // 
             // ProjectInstaller
             // 
@@ -52,5 +58,6 @@
 
         private System.ServiceProcess.ServiceProcessInstaller serviceProcessInstaller1;
         private System.ServiceProcess.ServiceInstaller serviceInstaller1;
+
     }
 }

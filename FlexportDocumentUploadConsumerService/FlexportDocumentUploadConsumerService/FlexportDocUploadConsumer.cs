@@ -16,6 +16,9 @@ namespace FlexportDocumentUploadConsumerService
 {
     public class FlexportDocUploadConsumer
     {
+        private IConnection connection;
+        private IModel channel;
+        private ManualResetEvent _stopSignal = new ManualResetEvent(false);
         public class FileUploadMessage
         {
             public long FileID { get; set; }
@@ -58,8 +61,9 @@ namespace FlexportDocumentUploadConsumerService
 
             channel.BasicConsume("Flexport_File_Upload_queue", false, consumer);
             Console.WriteLine("Flexport consumer started. Listening for messages...");
-
-            while (true) Thread.Sleep(1000); // Keep service running
+            //  BLOCK here to keep service alive until Stop() is called
+            _stopSignal.WaitOne();
+            //while (true) Thread.Sleep(1000); // Keep service running
         }
 
         private async Task<bool> ProcessMessageAsync(long fileID)
@@ -173,6 +177,13 @@ namespace FlexportDocumentUploadConsumerService
                     ApiResponseMessage = apiMessage
                 });
             }
+        }
+
+        public void Stop()
+        {
+            _stopSignal.Set(); // Unblocks the WaitOne
+            channel?.Close();
+            connection?.Close();
         }
     }
 }
